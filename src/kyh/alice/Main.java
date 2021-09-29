@@ -18,28 +18,40 @@ class Main {
 
     int n_rader = 0, n_textrader = 0, n_ord = 0;
     String längsta = "";
-    SortedMap<String, Integer> lista = new TreeMap<String, Integer>();
+    var lista = new HashMap<String, Integer>();
 
     while (in.hasNextLine()) {
-      String[] ord = in.nextLine().toLowerCase().replaceAll("[^a-z]+", " ").trim().split(" ");
-
+      String[] ord = in.nextLine().toLowerCase().split("[^a-z]+");
       ++n_rader;
-      if (!ord[0].isEmpty()) {
-        ++n_textrader;
-        n_ord += ord.length;
-        for (String o:ord) {
-            if (o.length() > längsta.length())  längsta = o;
 
-            if (lista.containsKey(o))  lista.put(o, lista.get(o)+1);
-            else                       lista.put(o, 1);
-        }
+      if (ord.length == 1  &&  ord[0].equals(""))  continue;
+      ++n_textrader;
+
+      for (String o:ord) {
+        ++n_ord;
+        if (o.length() > längsta.length())  längsta = o;
+        lista.put(o, lista.getOrDefault(o, 0)+1);
       }
-
     }
 
     in.close();
     System.out.println(String.format("%d rader, varav %d med text", n_rader, n_textrader));
     System.out.println(String.format("%d ord, varav %d unika", n_ord, lista.size()));
-    System.out.println(String.format("Det längsta ordet är '%s', och det mest förekommande är '%s' (%d gånger)", längsta, lista.firstKey(), lista.get(lista.firstKey())));
+
+    lista.remove("i");
+    lista.remove("a");
+    lista.remove("an");
+    lista.remove("the");
+
+    String vanligaste = "";
+    int n_vanligaste = 0;
+    for (Map.Entry<String, Integer> e:lista.entrySet()) {
+      if (e.getValue() > n_vanligaste) {
+        vanligaste = e.getKey();
+        n_vanligaste = e.getValue();
+      }
+    }
+
+    System.out.println(String.format("Det längsta ordet är '%s', och det mest förekommande är '%s' (%d gånger)", längsta, vanligaste, n_vanligaste));
   }
 }
